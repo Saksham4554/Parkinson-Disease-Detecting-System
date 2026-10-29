@@ -13,7 +13,6 @@ def load_model_files():
     model = joblib.load(BASE_DIR / "model.joblib")
     imputer = joblib.load(BASE_DIR / "imputer.joblib")
     scaler = joblib.load(BASE_DIR / "scaler.joblib")
-    selector = joblib.load(BASE_DIR / "selector.joblib")
     feature_columns = joblib.load(
         BASE_DIR / "feature_columns.joblib"
     )
@@ -100,9 +99,8 @@ if submitted:
             # Match the preprocessing used during training
             X_imputed = imputer.transform(input_df)
             X_scaled = scaler.transform(X_imputed)
-            X_selected = selector.transform(X_scaled)
             # Predict with the new SVM
-            prediction = int(model.predict(X_selected)[0])
+            prediction = int(model.predict(X_scaled)[0])
             st.subheader("🩺 Prediction Result")
             if prediction == 1:
                 st.error(
