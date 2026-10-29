@@ -16,9 +16,9 @@ def load_model_files():
     feature_columns = joblib.load(
         BASE_DIR / "feature_columns.joblib"
     )
-    return model, imputer, scaler, selector, feature_columns
+    return model, imputer, scaler, feature_columns
 try:
-    model, imputer, scaler, selector, feature_columns = (
+    model, imputer, scaler, feature_columns = (
         load_model_files()
     )
 except Exception as e:
