@@ -36,27 +36,15 @@ This application is an educational machine-learning project,
 not a substitute for professional medical diagnosis.
 """)
 feature_info = {
-    "MDVP:Fo(Hz)": "Average vocal fundamental frequency in Hz.",
-    "MDVP:Fhi(Hz)": "Maximum vocal fundamental frequency in Hz.",
-    "MDVP:Flo(Hz)": "Minimum vocal fundamental frequency in Hz.",
-    "MDVP:Jitter(%)": "Variation in fundamental frequency.",
-    "MDVP:Jitter(Abs)": "Absolute jitter measurement.",
-    "MDVP:RAP": "Relative average perturbation.",
-    "MDVP:PPQ": "Five-point period perturbation quotient.",
-    "Jitter:DDP": "Difference of differences of periods.",
+   "MDVP:Jitter(Abs)": "Absolute jitter measurement.",
     "MDVP:Shimmer": "Variation in voice amplitude.",
     "MDVP:Shimmer(dB)": "Shimmer measured in decibels.",
     "Shimmer:APQ3": "Three-point amplitude perturbation quotient.",
     "Shimmer:APQ5": "Five-point amplitude perturbation quotient.",
     "MDVP:APQ": "Amplitude perturbation quotient.",
-    "Shimmer:DDA": "Average absolute difference of consecutive amplitudes.",
-    "NHR": "Noise-to-harmonics ratio.",
-    "HNR": "Harmonics-to-noise ratio.",
-    "RPDE": "Recurrence period density entropy.",
-    "DFA": "Detrended fluctuation analysis.",
+    "Shimmer:DDA": "Average absolute amplitude difference.",
     "spread1": "Nonlinear fundamental-frequency measure.",
     "spread2": "Nonlinear fundamental-frequency measure.",
-    "D2": "Correlation dimension measure.",
     "PPE": "Pitch period entropy."
 }
 st.info(
