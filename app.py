@@ -56,7 +56,10 @@ st.markdown("""
 
 BASE_DIR = Path(__file__).resolve().parent
 
-st.title("Parkinson's Disease Prediction App", anchor=False)
+st.title(
+    "Parkinson's Disease Prediction App",
+    anchor=False
+)
 
 
 # =====================================================
@@ -215,7 +218,10 @@ with right_panel:
 
     with st.form("parkinsons_prediction_form"):
 
-        st.subheader("Enter Voice Measurements", anchor=False)
+        st.subheader(
+            "Enter Voice Measurements",
+            anchor=False
+        )
 
         for start in range(0, len(feature_columns), 2):
 
@@ -239,7 +245,6 @@ with right_panel:
                             feature,
                             f"Enter the measured value for {feature}."
                         ),
-                        autocomplete="on",
                         key=f"input_{idx}"
                     )
 
@@ -307,7 +312,11 @@ if submitted:
 
             # Prediction result
             st.divider()
-            st.subheader("🩺 Prediction Result")
+
+            st.subheader(
+                "🩺 Prediction Result",
+                anchor=False
+            )
 
             if prediction == 1:
 
@@ -391,7 +400,10 @@ if submitted:
 
 st.divider()
 
-st.header("📊 Prediction Analytics Dashboard", anchor=False)
+st.header(
+    "📊 Prediction Analytics Dashboard",
+    anchor=False
+)
 
 if deployment_collection is None:
 
@@ -444,7 +456,7 @@ else:
             )
 
             # ---------------------------------------------
-            # Total predictions
+            # TOTAL PREDICTIONS
             # ---------------------------------------------
 
             st.metric(
@@ -452,58 +464,144 @@ else:
                 len(analytics_df)
             )
 
+
             # ---------------------------------------------
-            # Prediction trends and distribution side by side
+            # PREDICTION TRENDS AND DISTRIBUTION
+            # SIDE BY SIDE
             # ---------------------------------------------
 
-            left_col, right_col = st.columns(2, gap="large")
+            left_col, right_col = st.columns(
+                2,
+                gap="large"
+            )
+
+
+            # =================================================
+            # LEFT: SINGLE LINE PREDICTION GRAPH
+            # =================================================
 
             with left_col:
 
-                st.subheader("Prediction Trends Over Time", anchor=False)
-
-                analytics_df["date"] = (
-                    analytics_df["created_at"].dt.date
+                st.subheader(
+                    "Prediction Trends Over Time",
+                    anchor=False
                 )
 
-                trend_data = (
-                    analytics_df.groupby(
-                        ["date", "prediction_label"]
-                    )
-                    .size()
-                    .reset_index(name="prediction_count")
+                # Sort predictions chronologically
+                sorted_df = analytics_df.sort_values(
+                    "created_at"
+                ).reset_index(drop=True)
+
+                # Assign prediction attempt numbers
+                sorted_df["prediction_number"] = np.arange(
+                    1,
+                    len(sorted_df) + 1
                 )
 
+                # Map prediction categories to Y-axis values
+                sorted_df["prediction_level"] = (
+                    sorted_df["prediction_label"].map({
+                        "Non-Parkinson's": 0,
+                        "Parkinson's": 1
+                    })
+                )
+
+                # Remove any records with unexpected labels
+                trend_data = sorted_df.dropna(
+                    subset=["prediction_level"]
+                ).copy()
+
+                # Create ONE line connecting all predictions
                 fig_trends = px.line(
+
                     trend_data,
-                    x="date",
-                    y="prediction_count",
-                    color="prediction_label",
+
+                    x="prediction_number",
+
+                    y="prediction_level",
+
                     markers=True,
-                    title="Daily Prediction Trends"
+
+                    title="Prediction Results by Attempt"
+
                 )
 
                 fig_trends.update_layout(
-                    xaxis_title="Prediction Date",
-                    yaxis_title="Number of Predictions",
-                    legend_title="Prediction Result",
-                    height=400
+
+                    xaxis_title="Number of Prediction Attempts",
+
+                    yaxis_title="Prediction Result",
+
+                    height=400,
+
+                    showlegend=False
+
+                )
+
+                # Display category names on Y-axis
+                fig_trends.update_yaxes(
+
+                    tickmode="array",
+
+                    tickvals=[0, 1],
+
+                    ticktext=[
+                        "Non-Parkinson's",
+                        "Parkinson's"
+                    ],
+
+                    range=[-0.25, 1.25]
+
+                )
+
+                # Show whole-number prediction attempts
+                fig_trends.update_xaxes(
+
+                    title="Number of Prediction Attempts",
+
+                    dtick=1
+
+                )
+
+                # Customize the single line
+                fig_trends.update_traces(
+
+                    line=dict(width=3),
+
+                    marker=dict(size=9),
+
+                    connectgaps=True
+
                 )
 
                 st.plotly_chart(
+
                     fig_trends,
+
                     use_container_width=True
+
                 )
 
 
+            # =================================================
+            # RIGHT: PREDICTION DISTRIBUTION
+            # =================================================
+
             with right_col:
 
-                st.subheader("Prediction Distribution", anchor=False)
+                st.subheader(
+                    "Prediction Distribution",
+                    anchor=False
+                )
 
                 distribution = (
+
                     analytics_df["prediction_label"]
+
                     .value_counts()
+
                     .reset_index()
+
                 )
 
                 distribution.columns = [
@@ -512,29 +610,44 @@ else:
                 ]
 
                 fig_distribution = px.pie(
+
                     distribution,
+
                     names="Prediction",
+
                     values="Count",
+
                     hole=0.4,
+
                     title="Parkinson's vs Non-Parkinson's Predictions"
+
                 )
 
                 fig_distribution.update_layout(
+
                     height=400,
+
                     legend_title="Prediction Result"
+
                 )
 
                 st.plotly_chart(
+
                     fig_distribution,
+
                     use_container_width=True
+
                 )
 
 
-            # ---------------------------------------------
-            # Prediction history
-            # ---------------------------------------------
+            # =================================================
+            # PREDICTION HISTORY
+            # =================================================
 
-            st.subheader("Prediction History", anchor=False)
+            st.subheader(
+                "Prediction History",
+                anchor=False
+            )
 
             history_df = pd.json_normalize(
                 records,
@@ -550,7 +663,10 @@ else:
                         history_df["created_at"],
                         utc=True
                     )
-                    .dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+                    .dt.strftime(
+                        "%Y-%m-%d %H:%M:%S UTC"
+                    )
 
                 )
 
@@ -565,30 +681,45 @@ else:
             )
 
 
-            # ---------------------------------------------
+            # =================================================
             # CSV EXPORT
-            # ---------------------------------------------
+            # =================================================
 
             csv_data = history_df.to_csv(
                 index=False
             ).encode("utf-8-sig")
 
             title_col, gap_col, button_col, empty_col = st.columns(
+
                 [1.0, 0.02, 0.7, 5],
+
                 vertical_alignment="center"
+
             )
 
             with title_col:
-                st.subheader("Get Records", anchor=False)
+
+                st.subheader(
+                    "Get Records",
+                    anchor=False
+                )
 
             with button_col:
+
                 st.download_button(
+
                     label="Get CSV",
+
                     data=csv_data,
+
                     file_name="parkinsons_prediction_history.csv",
+
                     mime="text/csv",
+
                     help="Download prediction records as CSV",
+
                     key="download_prediction_csv"
+
                 )
 
 
