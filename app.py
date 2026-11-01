@@ -239,6 +239,7 @@ with right_panel:
                             feature,
                             f"Enter the measured value for {feature}."
                         ),
+                        autocomplete="on",
                         key=f"input_{idx}"
                     )
 
